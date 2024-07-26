@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Subscription;
 
+use Temporal\Workflow\SignalMethod;
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
 
@@ -21,4 +22,10 @@ interface SubscriptionWorkflowInterface
     public function subscribe(
         string $userID
     );
+
+    #[SignalMethod]
+    public function suspend(): void;
+
+    #[SignalMethod]
+    public function resume(): void;
 }

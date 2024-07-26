@@ -20,6 +20,11 @@ class AccountActivity implements AccountActivityInterface
         $this->log('Send welcome email to %s', $userID);
     }
 
+    public function sendSuspensionEmail(string $userID): void
+    {
+        $this->log('Send suspension email to %s', $userID);
+    }
+
     public function chargeMonthlyFee(string $userID): void
     {
         $this->log('Charge %s of monthly fee', $userID);

@@ -18,6 +18,8 @@ interface AccountActivityInterface
 {
     public function sendWelcomeEmail(string $userID): void;
 
+    public function sendSuspensionEmail(string $userID): void;
+
     public function chargeMonthlyFee(string $userID): void;
 
     public function sendEndOfTrialEmail(string $userID): void;

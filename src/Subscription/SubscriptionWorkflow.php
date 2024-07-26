@@ -15,6 +15,7 @@ use Carbon\CarbonInterval;
 use Temporal\Activity\ActivityOptions;
 use Temporal\Exception\Failure\CanceledFailure;
 use Temporal\Workflow;
+use Temporal\Workflow\SignalMethod;
 
 /**
  * Demonstrates long-running process to represent user subscription process.
@@ -22,6 +23,7 @@ use Temporal\Workflow;
 class SubscriptionWorkflow implements SubscriptionWorkflowInterface
 {
     private $account;
+    private bool $isSuspended = false;
 
     public function __construct()
     {
@@ -40,7 +42,7 @@ class SubscriptionWorkflow implements SubscriptionWorkflowInterface
             $trialPeriod = true;
             while (true) {
                 // Lower period duration to observe workflow behaviour
-                yield Workflow::timer(CarbonInterval::seconds(5));
+                yield Workflow::timer(CarbonInterval::seconds(10));
 
                 if ($trialPeriod) {
                     yield $this->account->sendEndOfTrialEmail($userID);
@@ -48,6 +50,7 @@ class SubscriptionWorkflow implements SubscriptionWorkflowInterface
                     continue;
                 }
 
+                yield Workflow::await(fn()=> !$this->isSuspended);
                 yield $this->account->chargeMonthlyFee($userID);
                 yield $this->account->sendMonthlyChargeEmail($userID);
             }
@@ -59,5 +62,15 @@ class SubscriptionWorkflow implements SubscriptionWorkflowInterface
                 }
             );
         }
+    }
+
+    public function suspend(): void
+    {
+        $this->isSuspended = true;
+    }
+
+    public function resume(): void
+    {
+        $this->isSuspended = false;
     }
 }
