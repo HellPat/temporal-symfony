@@ -16,6 +16,12 @@ http:
     dir: "public"
     forbid: [ ".php", ".htaccess" ]
 
+temporal:
+  address: ${TEMPORAL_GRPC_HOST:-localhost:7233}
+  activities:
+    num_workers: 4
+    command: "php temporal_worker.php"
+
 logs:
   mode: development
   channels:

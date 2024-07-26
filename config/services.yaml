@@ -22,3 +22,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Temporal\Client\GRPC\ServiceClient:
+        factory: [ 'Temporal\Client\GRPC\ServiceClient', 'create' ]
+        arguments:
+            $address: '%env(TEMPORAL_GRPC_HOST)%'
