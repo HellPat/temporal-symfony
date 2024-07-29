@@ -23,7 +23,7 @@ use Temporal\Workflow\SignalMethod;
 class SubscriptionWorkflow implements SubscriptionWorkflowInterface
 {
     private $account;
-    private bool $isSuspended = false;
+    private bool $suspended = false;
 
     public function __construct()
     {
@@ -50,7 +50,7 @@ class SubscriptionWorkflow implements SubscriptionWorkflowInterface
                     continue;
                 }
 
-                yield Workflow::await(fn()=> !$this->isSuspended);
+                yield Workflow::await(fn()=> !$this->suspended);
                 yield $this->account->chargeMonthlyFee($userID);
                 yield $this->account->sendMonthlyChargeEmail($userID);
             }
@@ -66,11 +66,11 @@ class SubscriptionWorkflow implements SubscriptionWorkflowInterface
 
     public function suspend(): void
     {
-        $this->isSuspended = true;
+        $this->suspended = true;
     }
 
     public function resume(): void
     {
-        $this->isSuspended = false;
+        $this->suspended = false;
     }
 }
